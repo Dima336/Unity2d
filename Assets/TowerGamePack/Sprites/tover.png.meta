@@ -4,7 +4,7 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: 21300000
-    second: gray window_0
+    second: Doors_Opened
   - first:
       213: 21300002
     second: tover_1
@@ -16,7 +16,7 @@ TextureImporter:
     second: tover_3
   - first:
       213: 21300008
-    second: brown_window_0
+    second: Doors_Closed
   - first:
       213: 21300010
     second: roof_0
@@ -157,7 +157,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: gray window_0
+      name: Doors_Opened
       rect:
         serializedVersion: 2
         x: 949
@@ -241,7 +241,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: brown_window_0
+      name: Doors_Closed
       rect:
         serializedVersion: 2
         x: 3694
@@ -501,7 +501,7 @@ TextureImporter:
         width: 519
         height: 104
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -705,7 +705,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: e761cccb636d77148a8a4ae03deae593
     internalID: 0
     vertices: []
     indices: 

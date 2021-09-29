@@ -1,8 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 
@@ -22,18 +26,79 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private string _runAnimatorKey;
     [SerializeField] private string _jumpAnimatorKey;
     [SerializeField] private string _crouchAnimatorKey;
+    [SerializeField] private Transform _shootPosition;
+    [SerializeField] private GameObject _fireBoal;
     [SerializeField] private Transform _transform;
-    
+    [SerializeField] private int _maxHp;
+    [SerializeField] private int _maxMp;
+
     [Header(("Animation"))] 
     [SerializeField]
     private Animator _animator;
+
+    [Header("UI")] 
+    [SerializeField]
+    private TMP_Text _coinValueText;
+    
+    [Header("UI")] 
+    [SerializeField] private TMP_Text _coinsAmountText;
+
+    [SerializeField] private Slider _hpBar;
+
+    [SerializeField] private Slider _mpBar;
+    
     
     private float _direction;
     private bool _Jump;
     private bool _crawl;
+    private bool _atack;
+    private int _currentHp;
+    private int _currentMp;
+
+    private int _coinsValue;
+    
+    public int CoinsValue
+    {
+        get=>  _coinsValue;
+        
+        set
+        {
+            _coinsValue = value;
+            _coinValueText.text = value.ToString();
+        }
+        
+    }
+    private int CurrentHp
+    {
+        get => _currentHp;
+        set
+        {
+            if (value > _maxHp)
+                value = _maxHp;
+            _currentHp = value;
+            _hpBar.value = value;
+        }
+    }
+    private int CurrentMp
+    {
+        get => _currentMp;
+        set
+        {
+            if (value > _maxMp)
+                value = _maxMp;
+            _currentMp = value;
+            _mpBar.value = value;
+        }
+    }
     private void Start()
     {
+        _hpBar.maxValue = _maxHp;
+        _mpBar.maxValue = _maxMp;
+        CurrentHp = _maxHp;
+        CurrentMp = 50;// CurrentMp= _maxMp
+        CoinsValue = 0;
         _rigidbody = GetComponent<Rigidbody2D>();
+        
     }
 
     // Update is called once per frame
@@ -56,6 +121,12 @@ public class PlayerMover : MonoBehaviour
         }
 
         _crawl = Input.GetKey(KeyCode.C);
+
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            Instantiate(_fireBoal, _shootPosition.position, transform.rotation);
+        }
+  
 
     }
 
@@ -86,7 +157,7 @@ public class PlayerMover : MonoBehaviour
         
         _animator.SetBool(_jumpAnimatorKey,!canJump);
         _animator.SetBool(_crouchAnimatorKey,!_headCollider.enabled);
-        
+
     }
 
     private void OnDrawGizmos()
@@ -98,14 +169,58 @@ public class PlayerMover : MonoBehaviour
 
     public void AddHp(int hpPoints)
     {
-        Debug.Log("Hp raised" + hpPoints);
+        int missingHp = _maxHp - CurrentHp;
+        int pointToAddHp = missingHp > hpPoints ? hpPoints : missingHp;
+        StartCoroutine(RestoreHP(pointToAddHp));
     }
     public void AddMp(int mpPoints)
     {
-        Debug.Log("Mp raised" + mpPoints);
+        int missingMp = _maxMp - CurrentMp;
+        int pointToAddMp = missingMp > mpPoints ? mpPoints : missingMp;
+        StartCoroutine(RestoreMP(pointToAddMp));
     }
+
+    private IEnumerator RestoreHP(int pointToAddHp)
+    {
+        
+        while ( pointToAddHp!=0)
+        {
+            pointToAddHp--;
+            CurrentHp++;
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+    private IEnumerator RestoreMP(int pointToAddMp)
+    {
+        
+        while ( pointToAddMp!=0)
+        {
+            pointToAddMp--;
+            CurrentMp++;
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+
     public void AddArmor(int armorPoints)
     {
         Debug.Log("more armor " + armorPoints);
     }
+    public void TakeDamage(int damage)
+    {
+        CurrentHp -= damage;
+        print(CurrentHp);
+        if (CurrentHp <= 0)
+        {
+            Debug.Log("died");
+            gameObject.SetActive(false);
+            Invoke(nameof(ReloadScene),1f);
+          
+        }
+    }
+    private void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    
 }
