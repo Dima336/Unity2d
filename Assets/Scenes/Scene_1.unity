@@ -7199,6 +7199,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SNinja_swordidle 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2801031379284609789, guid: 5908cb9b590eaea45a7301686cb3ef3f, type: 3}
+      propertyPath: _faceRight
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2801031379284609791, guid: 5908cb9b590eaea45a7301686cb3ef3f, type: 3}
       propertyPath: m_RootOrder
       value: 12

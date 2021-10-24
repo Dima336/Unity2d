@@ -13,6 +13,7 @@ public class Shooter : MonoBehaviour
    [SerializeField] private int _maxHp;
    [SerializeField] private Slider _slider;
    [SerializeField] private GameObject _enemySystem;
+   [SerializeField] private PlayerMover _playerHero;
    private int _currentHp;
    private bool _canShoot;
 
@@ -40,6 +41,15 @@ public class Shooter : MonoBehaviour
       Gizmos.DrawWireCube(transform.position,new Vector3(_attackRange,1,0));
    }
 
+   private void ChangeHp(int hp)
+   {
+      _currentHp = hp;
+      if (_currentHp <= 0)
+      {
+         Destroy(_enemySystem);
+      }
+      _slider.value = hp;
+   }
 
    private void FixedUpdate()
    {
@@ -88,7 +98,14 @@ public class Shooter : MonoBehaviour
       CurrentHp -= damage;
       if (CurrentHp <= 0)
       {
+         _playerHero._enemysValue -= 1;
          Destroy(_enemySystem);
       }
+      
+   }
+
+   public void TakeDamageEnemy(int damage)
+   {
+      ChangeHp(_currentHp-damage);
    }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Jumper : MonoBehaviour
 {
@@ -13,12 +14,35 @@ public class Jumper : MonoBehaviour
     [SerializeField] private float _pushPower;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _jumpRange;
+    [SerializeField] private int _maxHp;
+    [SerializeField] private Slider _slider;
+    [SerializeField] private GameObject _enemySystem;
+    private int _currentHp;
     private Vector2 _startPosition;
     private int _direction=1;
     private float _lastAtackTime;
     private bool _Jump;
     private bool _canJump;
 
+    private int CurrentHp
+    {
+        get => _currentHp;
+        set
+        {
+            _currentHp = value;
+            _slider.value = value;
+        }
+    }
+    private void ChangeHp(int hp)
+    {
+        _currentHp = hp;
+        if (_currentHp <= 0)
+        {
+            Destroy(gameObject);
+        }
+        _slider.value = hp;
+    }
+    
     private Vector2 _drawPosition
     {
         get
@@ -38,6 +62,8 @@ public class Jumper : MonoBehaviour
   
     private void Start()
     {
+        _slider.maxValue = _maxHp;
+        CurrentHp = _maxHp;
         _startPosition = transform.position;
     }
 
@@ -83,7 +109,6 @@ public class Jumper : MonoBehaviour
         {
             _rigidbody2D.AddForce((Vector2.up * _jumpForce));
             _canJump = false;
-            return;
         }
         CheckIfCanJump();
         _rigidbody2D.velocity=Vector2.right * _direction * _speed;
@@ -109,4 +134,19 @@ public class Jumper : MonoBehaviour
             player.TakeDamage(_damage,_pushPower,transform.position.x);
         }
     }
+    public void TakeDamage(int damage)
+    {
+        CurrentHp -= damage;
+        if (CurrentHp <= 0)
+        {
+            Destroy(gameObject);
+        }
+      
+    }
+
+    public void TakeDamageEnemy(int damage)
+    {
+        ChangeHp(_currentHp-damage);
+    }
 }
+

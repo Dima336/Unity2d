@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Crab : MonoBehaviour
 {
   [SerializeField] private float _walkRange;
@@ -11,14 +11,36 @@ public class Crab : MonoBehaviour
   [SerializeField] private Rigidbody2D _rigidbody2D;
   [SerializeField] private int _damage;
   [SerializeField] private float _pushPower;
+  [SerializeField] private int _maxHp;
+  [SerializeField] private Slider _slider;
+  private int _currentHp;
   private Vector2 _startPosition;
   private int _direction=1;
   private float _lastAtackTime;
 
+  private int CurrentHp
+  {
+    get => _currentHp;
+    set
+    {
+      _currentHp = value;
+      _slider.value = value;
+    }
+  }
+  private void ChangeHp(int hp)
+  {
+    _currentHp = hp;
+    if (_currentHp <= 0)
+    {
+      Destroy(gameObject);
+    }
+    _slider.value = hp;
+  }
+  
   private Vector2 _drawPosition
   {
     get
-    {
+    { 
       if (_startPosition == Vector2.zero)
       {
         return transform.position;
@@ -34,6 +56,8 @@ public class Crab : MonoBehaviour
   
   private void Start()
   {
+    _slider.maxValue = _maxHp;
+    CurrentHp = _maxHp;
     _startPosition = transform.position;
   }
 
@@ -76,4 +100,20 @@ public class Crab : MonoBehaviour
       player.TakeDamage(_damage,_pushPower,transform.position.x);
     }
   }
+  public void TakeDamage(int damage)
+  {
+    CurrentHp -= damage;
+    if (CurrentHp <= 0)
+    {
+      Destroy(gameObject);
+    }
+      
+  }
+
+  public void TakeDamageEnemy(int damage)
+  {
+    ChangeHp(_currentHp-damage);
+  }
 }
+
+
